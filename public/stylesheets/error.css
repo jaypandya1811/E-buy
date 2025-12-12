@@ -1,0 +1,100 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Orbitron', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #0d1b2a, #1b263b);
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #e0e0e0;
+}
+
+/* Stars Canvas */
+#stars-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+/* Error Container */
+.error-container {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border: 2px solid #00ddeb;
+    border-radius: 15px;
+    box-shadow: 0 0 20px #00ddeb;
+    max-width: 600px;
+    z-index: 10;
+}
+
+.error-container h1 {
+    font-size: 4em;
+    color: #ff004f;
+    text-shadow: 0 0 15px #ff004f;
+    margin-bottom: 10px;
+}
+
+.error-container h2 {
+    font-size: 2em;
+    color: #00ddeb;
+    text-shadow: 0 0 10px #00ddeb;
+    margin-bottom: 20px;
+}
+
+.error-container p {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+}
+
+.btn {
+    background: #00ddeb;
+    color: #0d1b2a;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.btn:hover {
+    background: #e0e0e0;
+    transform: scale(1.1);
+}
+
+/* UFO */
+.ufo {
+    width: 100px;
+    height: 60px;
+    background: url('https://img.icons8.com/?size=100&id=16727&format=png') no-repeat center/contain;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    transition: transform 0.1s;
+}
+
+/* Beam Effect */
+.beam {
+    width: 20px;
+    height: 0;
+    background: linear-gradient(to bottom, rgba(0, 221, 235, 0.5), transparent);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+    opacity: 0;
+    transition: height 0.3s, opacity 0.3s;
+}

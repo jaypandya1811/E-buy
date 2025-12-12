@@ -1,0 +1,364 @@
+<%- include('header') %>
+    <section class="checkout spad">
+        <div class="container">
+            <div class="checkout__form">
+                <form action="/products/editproduct/<%= product._id %>" method="post" enctype="multipart/form-data" id="editform">
+                    <div class="row">
+                        <div class="col-lg-8 col-md-6">
+                            <h6 class="checkout__title">Add product</h6>
+                            <div class="row custom-row">
+                                <div class="col-lg-6">
+                                    <label for="maincategory">Choose main category</label><span style="color: red;">*</span>
+                                    <select name="maincategory" id="maincategory" class="form-select">
+                                    <% if (maincategories) { %>
+                                    <option value="" selected disabled>Select main category</option>
+                                    <% maincategories.forEach((val) => { %>
+                                        <option value="<%= val['id'] %>" <%= String(product.maincategory._id) === String(val._id) ? "selected" : "" %>>
+                                            <%= val['maincategory'] %>
+                                        </option>
+                                    <% }); %>
+                                    <% } %>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label for="cars">Choose sub category</label><span style="color: red;">*</span>
+                                    <select name="subcategory" id="subcategory" multiple>
+                                    <% if (subcategories) { %>
+                                    <% subcategories.forEach((val) => { %>
+                                        <option value="<%= val['id'] %>"
+                                            <%= product.subcategory.some(sc => String(sc._id) === String(val._id)) ? "selected" : "" %>><%= val['subcategory'] %></option>
+                                    <% }); %>
+                                    <% } %>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label for="category">Category</label><span style="color: red;">*</span>
+                                    <select name="category" id="categories">
+                                    <% if (categories) { %>
+                                        <option value="" selected disabled>Select category</option>
+                                    <% categories.forEach((val) => { %>
+                                        <option value="<%= val['id'] %>"
+                                            <%= String(product.category._id) === String(val._id) ? "selected" : "" %>><%= val['category'] %></option>
+                                    <% }); %>
+                                    <% } %>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="checkout__input">
+                                        <p>Product name<span>*</span></p>
+                                        <input type="text" name="productname" value="<%= product.productname %>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="checkout__input">
+                                        <p>Price<span>*</span></p>
+                                        <input type="number" name="price" value="<%= product.price %>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="checkout__input">
+                                        <p>Sizes</p>
+                                        <input type="text" name="size" id="size" placeholder="Add sizes by pressing enter" class="form-control" value="<%= product.size %>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="checkout__input">
+                                        <p>Colors</p>
+                                        <input type="text" name="color" id="color" placeholder="Enter color codes like #ffffff" value="<%= product.color %>">
+                                        <span><strong>Note:</strong> you should have the actuall hex code of product color</span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="checkout__input">
+                                        <p>Offer</p>
+                                        <input type="text" name="offer" placeholder="Enter offer like 10%off or -20%" value="<%= product.offer %>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="checkout__input">
+                                        <p>Short description<span>*</span></p>
+                                        <textarea name="shortdescription" style="width: 100%;"><%= product.shortdescription %></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="checkout__input">
+                                        <p>Description</p>
+                                        <textarea name="description" style="width: 100%;"><%= product.description %></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                        <p>Cover image<span style="color: red;">*</span></p>
+                                        <input type="file" name="coverimage" id="coverimage" accept="images/*" class="mb-4" onchange="showcoverimage()">
+                                        <p class="mt-2" style="display: none;" id="selectedcoverimagetitle">Selected coverimage :</p>
+                                        <div class="mt-2 mb-4 selectedcoverimage"> 
+                                        </div>
+                                        <% if (product.coverimage) { %>
+                                        <p class="mt-2">Uploaded coverimage :</p>
+                                        <div class="mt-2 mb-4">
+                                            <img src="/<%= product.coverimage %>" alt="cover" style="max-height:100px;" class="rounded">
+                                            <input type="hidden" name="oldcoverimage" id="oldcoverimage" value="<%= product.coverimage %>">
+                                        </div>
+                                        <% } %>
+                                </div>
+                                <div class="col-lg-6">
+                                        <p>Images</p>
+                                        <input type="file" name="images" class="images" accept="images/*" multiple>
+                                        <p class="mt-2" style="display: none;" id="selectedimagestitle">Selected images :</p>
+                                        <div class="mt-2 mb-4 d-flex flex-wrap gap-2 selectedimages">
+                                        </div> 
+                                    <% if (product.images && product.images.length) { %>
+                                    <p class="mt-2">Uploaded images :</p>
+                                    <div class="mt-2 d-flex flex-wrap gap-2 selectedimages">
+                                        <% product.images.forEach(img => { %>
+                                            <div class="position-relative d-inline-block" style="max-height:80px;">
+                                            <!-- Image -->
+                                            <img src="/<%= img %>" alt="image" style="max-height:80px;" class="rounded">
+
+                                            <!-- Hidden input -->
+                                            <input type="hidden" name="oldimages" class="oldimages" value="<%= img %>">
+
+                                            <!-- Overlay (hidden until hover) -->
+                                            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-opacity-50 opacity-0 rounded"
+                                                onmouseenter="this.classList.replace('opacity-0','opacity-100')"
+                                                onmouseleave="this.classList.replace('opacity-100','opacity-0')"
+                                                onclick="this.closest('.position-relative').remove()">
+
+                                            <!-- Delete icon -->
+                                            <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center"
+                                                style="width:35px; height:35px; cursor:pointer;">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                    <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                        <path d="M12 20h5c0.5 0 1 -0.5 1 -1v-14M12 20h-5c-0.5 0 -1 -0.5 -1 -1v-14"/>
+                                                        <path d="M4 5h16"/>
+                                                        <path d="M10 4h4M10 9v7M14 9v7"/>
+                                                    </g>
+                                                    </svg>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        <% }) %>
+                                    </div>
+                                    <% } %>
+
+                                        <!-- <% if (product.images && product.images.length) { %>
+                                        <p class="mt-2">Uploaded images :</p>
+                                        <div class="mt-2 d-flex gap-2">
+                                            <% product.images.forEach(img => { %>
+                                                <div>
+                                                    <img src="<%= img %>" alt="image" style="max-height:80px;">
+                                                    <input type="hidden" name="oldimages" value="<%= img %>">
+                                                </div>
+                                            <% }) %>
+                                        </div>
+                                    <% } %> -->
+                                </div>
+                                <div class="col-lg-6">
+                                    <label for="tags">Choose tags</label>
+                                    <select name="tags" id="tags" multiple>
+                                    <% if (tags) { %>
+                                    <% tags.forEach((val) => { %>
+                                        <option value="<%= val['id'] %>"
+                                            <%= product.tags.some(tg => String(tg._id) === String(val._id)) ? "selected" : "" %>><%= val['tag'] %></option>
+                                    <% }); %>
+                                    <% } %>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label for="related products">Choose related products</label>
+                                    <select name="relatedproducts" id="relatedproducts" multiple>
+                                    <% if (products) { %>   
+                                    <% products.forEach((val) => { 
+                                        let subcats = Array.isArray(val.subcategory) 
+                                        ? val.subcategory.map(s => s.subcategory).join(", ") 
+                                        : (val.subcategory?.subcategory || "");
+                                        %>
+                                        <option value="<%= val['id'] %>" 
+                                            data-category="<%= val.category.category %>"
+                                            data-subcategory="<%= subcats %>"
+                                            data-productname="<%= val.productname %>"
+                                            <% if(product.relatedproducts) { %><%= product.relatedproducts.some(rp => String(rp._id) === String(val._id)) ? "selected" : "" %><% } %>><%= val.productname %></option>
+                                    <% }); %>
+                                    <% } %>
+                                    </select>
+                                    <strong>Note: </strong><span>you can search products by category and subcategories also
+                                    </span>
+                                </div>
+                            <div class="col-lg-6">
+                            <div class="form-check form-switch mb-3 ml-4">
+                            <input class="form-check-input" type="checkbox" id="status" name="status" value="active" checked>
+                            <label class="form-check-label" for="statusSwitch">Active</label>
+                            </div>
+                            </div>
+                            <div class="col-lg-6 mt-4">
+                            <input type="submit" value="save" class="site-btn" style="width: 100px; margin-left: auto; margin-right: auto;"/>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- Checkout Section End -->
+<%- include('footer') %>
+<script>
+    function showcoverimage(){
+    const coverimage = document.getElementById("coverimage");
+    const container = document.querySelector(".selectedcoverimage");
+    const p = document.getElementById('selectedcoverimagetitle');
+     if (coverimage.files && coverimage.files[0]) {
+        p.style.display = "";
+        const reader = new FileReader();
+        reader.onload = function(e) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "position-relative d-inline-block";
+
+        const img = document.createElement("img");
+            img.src = e.target.result;
+            img.alt = "cover";
+            img.style.maxHeight = "100px";
+            
+        const overlay = document.createElement("div");
+            overlay.className = "position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center";
+            overlay.innerHTML = `
+            <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center" 
+                style="width:40px; height:40px; cursor:pointer; transition-duration: 0.5s;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                    <path d="M12 20h5c0.5 0 1 -0.5 1 -1v-14M12 20h-5c-0.5 0 -1 -0.5 -1 -1v-14"/>
+                    <path d="M4 5h16"/>
+                    <path d="M10 4h4M10 9v7M14 9v7"/>
+                </g>
+                </svg>
+            </div>
+            `;
+
+            overlay.style.opacity = 0;
+            wrapper.addEventListener("mouseenter", () => overlay.style.opacity = "1");
+            wrapper.addEventListener("mouseleave", () => overlay.style.opacity = "0");
+
+            overlay.addEventListener("click", () => {
+                wrapper.remove();
+                p.style.display = "none";
+                coverimage.value = "";
+            });
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(overlay);
+            container.appendChild(wrapper);
+        }
+        reader.readAsDataURL(coverimage.files[0]);
+    }
+    }
+     document.querySelector('.images').addEventListener("change", () => {
+        const images = document.querySelectorAll('.images');
+        const preview = document.querySelector('.selectedimages');
+        const p = document.getElementById('selectedimagestitle');
+        preview.innerHTML = "";
+        images.forEach(val => {
+        Array.from(val.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (val) => {
+            p.style.display = "";
+            const wrapper = document.createElement("div");
+            wrapper.className = "position-relative d-inline-block";
+            const img = document.createElement("img");
+            img.src = URL.createObjectURL(file);
+            img.style.maxHeight = '100px';
+
+            const overlay = document.createElement("div");
+            overlay.className = "position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center";
+            overlay.innerHTML = `
+            <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center" 
+                style="width:40px; height:40px; cursor:pointer;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                    <path d="M12 20h5c0.5 0 1 -0.5 1 -1v-14M12 20h-5c-0.5 0 -1 -0.5 -1 -1v-14"/>
+                    <path d="M4 5h16"/>
+                    <path d="M10 4h4M10 9v7M14 9v7"/>
+                </g>
+                </svg>
+            </div>
+            `;
+
+            // Show overlay on hover using Bootstrap's opacity utilities
+            overlay.style.opacity = 0;
+            wrapper.addEventListener("mouseenter", () => overlay.style.opacity = "1");
+            wrapper.addEventListener("mouseleave", () => overlay.style.opacity = "0");
+
+            // Delete functionality
+            overlay.addEventListener("click", () =>  {
+                wrapper.remove();
+                const dt = new DataTransfer();
+                Array.from(document.getElementsByClassName("images").files).forEach(f => {
+                    if(f.name !== file.name){
+                        dt.items.add(f);
+                    }
+                });
+                document.getElementsByClassName('images').files = dt.files;
+                if(document.getElementsByClassName('images').files.length == 0){
+                   p.style.display = "none";
+                }
+            });
+            wrapper.appendChild(img);
+            wrapper.appendChild(overlay);
+            preview.appendChild(wrapper);
+        };
+        reader.readAsDataURL(file);
+        });
+    });
+});
+    document.getElementById("status").addEventListener("change", () => {
+        const status = document.getElementById("status");
+        status.value = "Inactive";
+    });
+
+    const form = document.getElementById('editform');
+    form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const coverimage = document.getElementById("coverimage");
+    const oldcoverimage = document.getElementById("oldcoverimage");
+    const images = document.querySelectorAll(".images");
+    const oldimages = document.querySelectorAll(".oldimages");
+    images.forEach(val => {
+        val.disabled = false;
+    });
+    oldimages.forEach(val => {
+        val.disabled = false;
+    });
+    coverimage.disabled = false;
+    oldcoverimage.disabled = false;
+
+    if (coverimage.files[0]){
+        oldcoverimage.disabled = true;
+    } else {
+        coverimage.disabled = true;
+        oldcoverimage.name = "coverimage";
+    }
+if(images[0].files.length > 0){
+    images.forEach(val => {
+    if(val.files){
+        oldimages.forEach(val => {
+            val.disabled = true;
+        });
+    }
+    });
+    const data = new FormData(form);
+    for(let i of data){
+        console.log(i);
+    }
+}else{
+        images.forEach(val => {
+            val.disabled = true;
+        });
+        oldimages.forEach(val => {
+            val.name = "images";
+        });
+        const data = new FormData(form);
+    for(let i of data){
+        console.log(i);
+    }
+}
+    // form.submit();
+});
+</script>
